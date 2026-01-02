@@ -64,10 +64,10 @@ const Home = () => {
 				"label": taskToEdit.label,
 				"is_done": !taskToEdit.is_done
 			}),
-			headers: {"Content-type": "application/json"}
+			headers: { "Content-type": "application/json" }
 		})
-		if(response.ok) getTasks(); console.log(taskToEdit);
-			
+		if (response.ok) getTasks(); console.log(taskToEdit);
+
 	}
 
 	useEffect(() => {
@@ -104,10 +104,15 @@ const Home = () => {
 					{taskList.length > 0 ? (
 						<ul>
 							{taskList.map((task) => (
-								<li className="d-flex justify-content-start" key={task.id}>
-									{task.label} 
-									<button className="btn d-flex justify-content-end" onClick={() => deleteTask(task.id)}>❌</button>
-									<button onClick={() => editTask(task.id)}>📝</button>
+								<li className="d-flex justify-content-between align-items-start" key={task.id}>
+									<div>
+										<i className={`fa-solid fa-${task.is_done ? "check text-success" : "x text-danger"}`}></i>
+										{task.label}
+									</div>
+									<div className="d-flex justify-content-between">
+										<button className="btn" onClick={() => deleteTask(task.id)}><i class="fa-solid fa-trash"></i></button>
+										<button className="btn" onClick={() => editTask(task.id)}><i class="fa-solid fa-pencil"></i></button>
+									</div>
 								</li>
 							))}
 						</ul>
