@@ -15,14 +15,12 @@ const Home = () => {
 
 	const getTasks = async () => {
 		const response = await fetch(`${url}/users/Camila`)
-		console.log(response);
 		if (!response.ok) {
 			console.log("Usuario no existente");
 			createUser()
 			return
 		}
 		const data = await response.json()
-		console.log(data);
 		setTaskList(data.todos)
 	}
 
@@ -39,14 +37,14 @@ const Home = () => {
 	}
 
 	const addTask = async () => {
-		if (inputValue.trim()== "") return
+		if (inputValue.trim() == "") return
 		const response = await fetch(`${url}/todos/Camila`, {
 			method: "POST",
 			body: JSON.stringify({
 				"label": inputValue,
 				"is_done": false
 			}),
-			headers: {"Content-type": "application/json"}
+			headers: { "Content-type": "application/json" }
 		})
 		if (response.ok) getTasks(); setInputValue("")
 	}
@@ -56,6 +54,20 @@ const Home = () => {
 			method: "DELETE"
 		})
 		if (response.ok) getTasks()
+	}
+
+	const editTask = async (id) => {
+		const taskToEdit = taskList.find((task) => id == task.id)
+		const response = await fetch(`${url}/todos/${id}`, {
+			method: "PUT",
+			body: JSON.stringify({
+				"label": taskToEdit.label,
+				"is_done": !taskToEdit.is_done
+			}),
+			headers: {"Content-type": "application/json"}
+		})
+		if(response.ok) getTasks(); console.log(taskToEdit);
+			
 	}
 
 	useEffect(() => {
@@ -73,20 +85,38 @@ const Home = () => {
 						placeholder="Lo necesario . . ."
 						value={inputValue}
 						onChange={(e) => setInputValue(e.target.value)}
-						onKeyUp={(e) => {if (e.key=="Enter") addTask()}}
+						onKeyUp={(e) => { if (e.key == "Enter") addTask() }}
 					/>
 					<button
 						className="btn btn-ligth border border-dark"
-						onClick={() => addTask()} 
+						onClick={() => addTask()}
 					>
 						Agregar 🛒
 					</button>
 				</div>
-				<ul>
-					{taskList.map((task)=>(
-						<li key={task.id}>{task.label}<button onClick={() => deleteTask(task.id)}>Borrar</button></li>
-					))}
-				</ul>
+				<div className="container" style={{
+					maxHeight: "30em",
+					overflowY: "auto",
+					lineHeight: "1.5em",
+					textOverflow: "clip",
+					whiteSpace: "normal",
+				}}>
+					{taskList.length > 0 ? (
+						<ul>
+							{taskList.map((task) => (
+								<li className="d-flex justify-content-start" key={task.id}>
+									{task.label} 
+									<button className="btn d-flex justify-content-end" onClick={() => deleteTask(task.id)}>❌</button>
+									<button onClick={() => editTask(task.id)}>📝</button>
+								</li>
+							))}
+						</ul>
+					) : (
+						<div className="text-center mt-3">
+							<p>No hay tareas, añadir tareas</p>
+						</div>
+					)}
+				</div>
 			</div>
 		</>
 	);
